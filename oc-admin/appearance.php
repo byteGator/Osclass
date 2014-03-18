@@ -43,6 +43,7 @@
                     if(isset($filePackage['size']) && $filePackage['size']!=0) {
                         $path = osc_themes_path();
                         (int) $status = osc_unzip_file($filePackage['tmp_name'], $path);
+                        @unlink($filePackage['tmp_name']);
                     } else {
                         $status = 3;
                     }
@@ -78,6 +79,7 @@
                     $theme = Params::getParam('webtheme');
                     if($theme!='') {
                         if($theme!=  osc_current_web_theme()) {
+                            osc_run_hook("theme_delete_".$theme);
                             if(osc_deleteDir(osc_content_path()."themes/".$theme."/")) {
                                 osc_add_flash_ok_message(_m("Theme removed successfully"), "admin");
                             } else {
@@ -172,18 +174,6 @@
                     $this->doView('appearance/view.php');
                 break;
                 default:
-//                    $marketError = Params::getParam('marketError');
-//                    $slug = Params::getParam('slug');
-//                    if($marketError!='') {
-//                        if($marketError == '0') { // no error installed ok
-//                            $help = '<br/><br/><b>' . __('You only need to activate or preview the theme').'</b>';
-//                            osc_add_flash_ok_message( __('Everything was OK!') . ' ( ' . $slug .' ) ' . $help, 'admin');
-//                        } else {
-//                            osc_add_flash_error_message( __('Error occurred') . ' ( ' . $slug .' ) ', 'admin');
-//                        }
-//                    }
-
-                    // force the recount of themes that need to be updated
                     if(Params::getParam('checkUpdated') != '') {
                         osc_admin_toolbar_update_themes(true);
                     }

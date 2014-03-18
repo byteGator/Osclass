@@ -108,10 +108,7 @@
                 }
             }
             // update alerts user id with the same email
-            $aAlerts = Alerts::newInstance()->findByEmail( $input['s_email'] );
-            foreach( $aAlerts as $aux ) {
-                Alerts::newInstance()->update(array('fk_i_user_id' => $userId), array('s_email' => $input['s_email']));
-            }
+            Alerts::newInstance()->update(array('fk_i_user_id' => $userId), array('s_email' => $input['s_email']));
 
             $user = $this->manager->findByPrimaryKey($userId);
 
@@ -255,7 +252,7 @@
 
                 //if we want to change the password
                 if( Params::getParam('s_password', false, false) != '') {
-                    $input['s_password'] = sha1( Params::getParam('s_password', false, false) );
+                    $input['s_password'] = osc_hash_password(Params::getParam('s_password', false, false));
                 }
                 $input['s_username']     = osc_sanitize_username(Params::getParam('s_username'));
             }
@@ -264,6 +261,10 @@
             $input['s_website']      = trim(Params::getParam('s_website'));
             $input['s_phone_land']   = trim(Params::getParam('s_phone_land'));
             $input['s_phone_mobile'] = trim(Params::getParam('s_phone_mobile'));
+
+            if(strtolower(substr($input['s_website'], 0, 4))!=='http') {
+                $input['s_website'] = 'http://'.$input['s_website'];
+            }
 
             //locations...
             $country = Country::newInstance()->findByCode( Params::getParam('countryId') );
